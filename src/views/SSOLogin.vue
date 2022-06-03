@@ -24,7 +24,7 @@ export default defineComponent({
       veridaContext: null,
       isLoading: false,
       error: null,
-      contextName: VUE_APP_CONTEXT_NAME ? VUE_APP_CONTEXT_NAME : '',
+      contextName: VUE_APP_CONTEXT_NAME,
       logo: VUE_APP_LOGO,
       loginText: VUE_APP_LOGIN_TEXT,
     };

@@ -23,14 +23,14 @@ export default defineComponent({
   emits: ["onVeridaContextSet"],
   data() {
     return {
-      contextName: VUE_APP_CONTEXT_NAME ? VUE_APP_CONTEXT_NAME : '',
+      contextName: VUE_APP_CONTEXT_NAME,
       logo: VUE_APP_LOGO,
       error: null,
     };
   },
   methods: {
     async onLogout() {
-      store.remove(VUE_APP_CONTEXT_NAME ? VUE_APP_CONTEXT_NAME : '');
+      store.remove(VUE_APP_CONTEXT_NAME ? VUE_APP_CONTEXT_NAME : "");
       this.$router.push({ name: "Connect" });
     },
     onError(error: any) {
