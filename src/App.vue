@@ -13,13 +13,13 @@ export default defineComponent({
   props: {},
   data() {
     return {
-      isLoggedIn: hasSession(VUE_APP_CONTEXT_NAME ? VUE_APP_CONTEXT_NAME : ''),
+      isLoggedIn: hasSession(VUE_APP_CONTEXT_NAME),
     };
   },
 
   methods: {
     setLogin() {
-      this.isLoggedIn = hasSession(VUE_APP_CONTEXT_NAME ? VUE_APP_CONTEXT_NAME : '');
+      this.isLoggedIn = hasSession(VUE_APP_CONTEXT_NAME);
     },
   },
 });

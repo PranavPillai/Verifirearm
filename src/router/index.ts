@@ -28,7 +28,7 @@ const router = createRouter({
 
 router.beforeEach((to, _, next) => {
   if (to.matched.some((record) => record.meta.requiresAuth)) {
-    if (hasSession(VUE_APP_CONTEXT_NAME ? VUE_APP_CONTEXT_NAME : '')) {
+    if (VUE_APP_CONTEXT_NAME && hasSession(VUE_APP_CONTEXT_NAME)) {
       next();
     } else {
       next("/connect");
