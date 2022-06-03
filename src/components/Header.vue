@@ -1,43 +1,47 @@
 <template>
   <header class="header">
-    <div><img src="../assets/images/verida_logo.svg" alt="logo" /></div>
+    <div></div>
     <vda-account
       :logo="logo"
       :contextName="contextName"
       @onLogout="onLogout"
-      @onError="onError"
       @onConnected="onSuccess"
     />
   </header>
 </template>
 
-<script lang="ts">
+<script>
 import { defineComponent } from "vue";
-import store from "store";
-import * as verida from "@verida/client-ts/";
+import { veridaClient } from "@/helpers";
 
-const { VUE_APP_CONTEXT_NAME, VUE_APP_LOGO } = process.env;
+const { VUE_APP_CONTEXT_NAME, VUE_APP_LOGO_URL } = process.env;
 
 export default defineComponent({
   name: "Header",
-  emits: ["onVeridaContextSet"],
+  props: {
+    setStatus: {
+      type: Function,
+      required: true,
+    },
+  },
   data() {
     return {
+      isOpened: false,
       contextName: VUE_APP_CONTEXT_NAME,
-      logo: VUE_APP_LOGO,
-      error: null,
+      logo: VUE_APP_LOGO_URL,
     };
   },
   methods: {
+    toggleDropdown() {
+      this.isOpened = !this.isOpened;
+    },
+    async onSuccess(context) {
+      await veridaClient.connectVault(context);
+      this.setStatus(veridaClient.connected);
+    },
     async onLogout() {
-      store.remove(VUE_APP_CONTEXT_NAME ? VUE_APP_CONTEXT_NAME : "");
+      veridaClient.logout();
       this.$router.push({ name: "Connect" });
-    },
-    onError(error: any) {
-      this.error = error;
-    },
-    async onSuccess(veridaContext: verida.Context) {
-      this.$emit("onVeridaContextSet", veridaContext);
     },
   },
 });
