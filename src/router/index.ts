@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import Credential from "../views/Home.vue";
+import DMV from '../views/DMV.vue';
 import SSOLogin from "../views/SSOLogin.vue";
 import Health from "../views/HealthCredentialer.vue";
 import Crime from "../views/CrimeCredentialer.vue";
@@ -20,14 +21,28 @@ const routes: Array<RouteRecordRaw> = [
     component: SSOLogin,
   },
   {
+    path: "/dmv",
+    name: "DMV",
+    component: DMV,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
     path: "/health",
     name: "Health",
     component: Health,
+    meta: {
+      requiresAuth: true,
+    },
   },
   {
-    path: "/connect",
-    name: "Connect",
+    path: "/crime",
+    name: "Crime",
     component: Crime,
+    meta: {
+      requiresAuth: true,
+    },
   },
 ];
 

@@ -40,7 +40,7 @@ class VeridaClient {
     const config = {
       recipientContextName: "Verida: Vault",
     };
-    const subject = "New " + messageData.healthType + " Credential";
+    const subject = "New Credential";
     await this.messagingInstance.send(did, type, data, subject, config);
     return true;
   }
