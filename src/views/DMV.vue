@@ -155,7 +155,7 @@ export default defineComponent({
         firstName: this.firstName,
         lastName: this.lastName,
         regNumber: this.regNumber,
-        healthType: this.eyeColor,
+        eyeColor: this.eyeColor,
         todaysDate: this.todaysDate,
         schema: VUE_APP_MAPAY_SCHEMA,
         testTimestamp: issueDate.toISOString(),
@@ -170,6 +170,7 @@ export default defineComponent({
         this.$toast.success("Credentials Sent Successfully");
       } catch (error) {
         console.log("172");
+        console.log(error);
         this.$toast.error("Something went wrong  ");
       } finally {
         this.isSubmitting = false;

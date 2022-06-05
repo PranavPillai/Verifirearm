@@ -1,32 +1,29 @@
 {
-	"name": "vue-starter-kit",
+	"name": "demo-credential-issuer",
 	"version": "0.1.0",
 	"private": true,
 	"engines": {
 		"node": "^14.0.0"
-	},
-	"resolutions": {
-		"acorn": "8.0.1"
 	},
 	"scripts": {
 		"serve": "vue-cli-service serve",
 		"build": "vue-cli-service build",
 		"lint": "vue-cli-service lint"
 	},
+	"resolutions": {
+		"acorn": "8.0.1"
+	},
 	"dependencies": {
-		"@verida/account-web-vault": "^1.1.11",
-		"@verida/verifiable-credentials": "^0.1.6",
-		"@verida/vue-account": "^0.1.33",
+		"@verida/verifiable-credentials": "^0.1.5",
+		"@verida/vue-account": "^0.1.34",
 		"core-js": "^3.6.5",
-		"sass": "^1.51.0",
+		"store": "^2.0.12",
 		"vue": "^3.0.0",
 		"vue-router": "^4.0.0-0",
 		"vue-spinner": "^1.0.4",
-		"vue-toast-notification": "^2.0.1",
-		"vuex": "^4.0.2"
+		"vue-toast-notification": "^2.0.1"
 	},
 	"devDependencies": {
-		"@types/events": "^3.0.0",
 		"@types/store": "^2.0.2",
 		"@typescript-eslint/eslint-plugin": "^4.18.0",
 		"@typescript-eslint/parser": "^4.18.0",
@@ -41,8 +38,10 @@
 		"eslint": "^6.7.2",
 		"eslint-plugin-prettier": "^3.3.1",
 		"eslint-plugin-vue": "^7.0.0",
+		"github-release-notes": "^0.17.3",
+		"node-sass": "6.0.1",
 		"prettier": "^2.2.1",
-		"sass-loader": "^8.0.2",
+		"sass-loader": "10",
 		"typescript": "~4.1.5"
 	}
 }

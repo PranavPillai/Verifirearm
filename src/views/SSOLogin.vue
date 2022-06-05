@@ -1,7 +1,14 @@
 <template>
+  <pulse-loader
+    class="loader"
+    v-if="isLoading"
+    color="#000"
+    :loading="isLoading"
+  />
   <vda-login
+    v-else
     @onError="onError"
-    @onConnected="onConnected"
+    @onConnected="onSuccess"
     :contextName="contextName"
     :logo="logo"
     :loginText="loginText"
@@ -10,35 +17,51 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { mapMutations } from "vuex";
-
-const { VUE_APP_CONTEXT_NAME, VUE_APP_LOGO, VUE_APP_LOGIN_TEXT } = process.env;
+import PulseLoader from "vue-spinner/src/PulseLoader.vue";
+import { veridaClient } from "@/helpers/";
+import { CONTEXT_NAME, LOGIN_TEXT, LOGO_URL } from "@/constants";
 
 export default defineComponent({
   name: "Connect",
   props: {},
-  components: {},
-  emits: ["setLogin"],
+  components: { PulseLoader },
   data() {
     return {
-      veridaContext: null,
       isLoading: false,
       error: null,
-      contextName: VUE_APP_CONTEXT_NAME,
-      logo: VUE_APP_LOGO,
-      loginText: VUE_APP_LOGIN_TEXT,
+      contextName: CONTEXT_NAME,
+      logo: LOGO_URL,
+      loginText: LOGIN_TEXT,
     };
   },
   methods: {
-    ...mapMutations(["setContext"]),
-    onConnected(context: any) {
-      this.setContext(context);
-      this.$router.push({ name: "Home" });
-    },
+    async onSuccess(context: any) {
+      try {
+        this.isLoading = true;
+        await veridaClient.connectVault(context);
 
-    onError(error: Error) {
-      console.log("Login Error", error);
+        this.$router.push({ name: "Home" });
+      } catch (error: any) {
+        this.error = error;
+      } finally {
+        this.isLoading = false;
+      }
+    },
+    onError(error: any) {
+      this.error = error;
     },
   },
 });
 </script>
+
+<style lang="scss" scoped>
+@import "../assets/scss/main.scss";
+
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  height: 40rem;
+}
+</style>
