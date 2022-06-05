@@ -18,7 +18,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import PulseLoader from "vue-spinner/src/PulseLoader.vue";
-import { veridaClient } from "@/helpers";
+import { veridaClient } from "@/helpers/";
 import { CONTEXT_NAME, LOGIN_TEXT, LOGO_URL } from "@/constants";
 
 export default defineComponent({

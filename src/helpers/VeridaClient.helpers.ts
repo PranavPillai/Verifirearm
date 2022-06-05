@@ -11,41 +11,23 @@ class VeridaClient {
   private messagingInstance: any;
 
   public async connectVault(context: any): Promise<void> {
-    if(!this.connected) {
-      this.context = context;
-      this.connected = true;
-      store.set(CONTEXT_NAME, true);
-      this.credentials = new Credentials();
-      this.did = await context.getAccount().did();
-      this.messagingInstance = await context.getMessaging();
-    }
+    this.context = context;
+    this.connected = true;
+    store.set(CONTEXT_NAME, true);
+    this.credentials = new Credentials();
+    this.did = await context.getAccount().did();
+    this.messagingInstance = await context.getMessaging();
   }
 
-  async createDIDJwt(data: any, subjectId: string): Promise<any> {
+  async createDIDJwt(data: any, subjectDid: string): Promise<any> {
     if (this.credentials) {
-      console.log("have credentials")
-      console.log(data);
-      console.log(this.context);
-      this.credentials.createCredentialJWT({
-        subjectId,
+      const credentialData = await this.credentials.createCredentialJWT(
+        subjectDid,
         data,
-        context: this.context,
-      }).then((credentialData) => {
-        return credentialData
-      }).catch((err) => {
-        console.log(err);
-        console.log(this.credentials?.getErrors());
-      })
-      // const credentialData = await this.credentials.createCredentialJWT({
-      //   subjectId,
-      //   data,
-      //   context: this.context,
-      // });
-      // console.log(credentialData);
-      // console.log(this.credentials.getErrors());
-      // return credentialData;
-    } else {
-      console.log("don't have credentials")
+        this.context
+      );
+
+      return credentialData;
     }
   }
 
@@ -58,7 +40,7 @@ class VeridaClient {
     const config = {
       recipientContextName: "Verida: Vault",
     };
-    const subject = "New Credential";
+    const subject = "New " + messageData.healthType + " Credential";
     await this.messagingInstance.send(did, type, data, subject, config);
     return true;
   }
