@@ -2,7 +2,7 @@
   <app-header :setStatus="setStatus" />
   <div v-if="connected" class="app-section">
     <div class="credential-form">
-      <img src="../assets/images/verida_logo.svg" alt="verida" />
+      <img class="logo" src="../assets/images/stanford-logo.png" alt="Stanford Department of Psychiatry and Behavioral Sciences" />
       <h1>Mental Health Screening</h1>
       <form @submit.prevent="onSubmit">
         <div class="grid-form">
@@ -167,6 +167,17 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 @import "../assets/scss/main.scss";
+body {
+  background: linear-gradient(
+    112.15deg,
+    #8e241a 9.05%,
+    rgba(0, 0, 0, 0.72) 81.35%
+  ) !important;
+}
+.logo {
+  height: 15rem;
+  width: 15rem;
+}
 .input-text {
   font-weight: 600;
   font-size: 14px;

@@ -2,16 +2,50 @@
   <app-header :setStatus="setStatus" />
   <div v-if="connected" class="app-section">
     <div class="credential-form">
-      <img src="../assets/images/verida_logo.svg" alt="verida" />
-      <h1>Complete Your Background Check</h1>
-      <form @submit.prevent="onSubmit">
+      <img class="logo" src="../assets/images/justice-dept-logo.jpeg" alt="verida" />
+      <h1>To Purchase a Firearm, Complete the CA Universal Background Check</h1>
+      <h2>The California DOJ Bureau of Firearms accepts verified credentials to prove identity, mental wellness, and criminal records.</h2>
+      <form @submit.prevent="onSubmitDMV">
         <div class="submit-btn">
           <button
-            :class="['btn-default', isSubmitting && 'loading']"
+            :class="['btn-default', (dmvSubmitting || dmvSubmitted) && 'loading', dmvSubmitted && 'done']"
             type="submit"
-            :disabled="isSubmitting"
+            :disabled="dmvSubmitting || dmvSubmitted"
           >
-            Send Credential
+            Submit Driver's License
+          </button>
+        </div>
+      </form>
+      <form @submit.prevent="onSubmitHealth">
+        <div class="submit-btn">
+          <button
+            :class="['btn-default', (healthSubmitting || healthSubmitted) && 'loading', healthSubmitted && 'done']"
+            type="submit"
+            :disabled="healthSubmitted || healthSubmitting"
+          >
+            Submit Mental Health Screening
+          </button>
+        </div>
+      </form>
+      <form @submit.prevent="onSubmitCrime">
+        <div class="submit-btn">
+          <button
+            :class="['btn-default', (crimeSubmitting || crimeSubmitted) && 'loading', crimeSubmitted && 'done']"
+            type="submit"
+            :disabled="crimeSubmitted || crimeSubmitting"
+          >
+            Submit Criminal Background Check
+          </button>
+        </div>
+      </form>
+      <form @submit.prevent="onVerify">
+        <div class="submit-btn">
+          <button
+            :class="['btn-default', (isSubmitting || (!crimeSubmitted) || (!dmvSubmitted) || (!healthSubmitted)) && 'loading']"
+            type="submit"
+            :disabled="isSubmitting || (!crimeSubmitted) || (!dmvSubmitted) || (!healthSubmitted)"
+          >
+            Verify Credentials and Submit Background Check
           </button>
         </div>
       </form>
@@ -20,76 +54,109 @@
   <div class="loading-pulse" v-else>
     <pulse-loader :loading="true" color="#000"></pulse-loader>
   </div>
+  <div class="modal-container" v-if="validatingMessage">
+    <div class="modal">
+      <rotate-loader />
+      <p>{{validatingMessage}}</p>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import PulseLoader from "vue-spinner/src/PulseLoader.vue";
+import RotateLoader from "vue-spinner/src/RotateLoader.vue";
 import { veridaClient } from "@/helpers";
 
 import AppHeader from "@/components/Header.vue";
 
-const { VUE_APP_DMV_SCHEMA } = process.env;
+const { VUE_APP_DMV_SCHEMA, VUE_APP_HEALTH_SCHEMA, VUE_APP_CRIME_SCHEMA  } = process.env;
 
 export default defineComponent({
   name: "Home",
   components: {
     AppHeader,
     PulseLoader,
+    RotateLoader
   },
   data() {
     return {
       connected: veridaClient.connected,
       did: veridaClient.did,
-      firstName: "",
-      lastName: "",
-      regNumber: "",
-      regExpDate: "",
-      healthTypes: [
-        "Dentist",
-        "Psychologist",
-        "Optometrist",
-        "Pharmacist",
-        "Allied Health Professional",
-      ],
-      healthSelectType: "Not Selected",
       selectOptions: false,
       isSubmitting: false,
       validationError: false,
+      dmvSubmitting: false,
+      healthSubmitting: false,
+      crimeSubmitting: false,
+      dmvSubmitted: false,
+      healthSubmitted: false,
+      crimeSubmitted: false,
+      validCreds: false,
+      validatingMessage: ""
     };
   },
   methods: {
-    async onSubmit() {
+    async onSubmitDMV() {
       this.validationError = false;
-      // if (this.healthSelectType === "Not Selected") {
-      //   this.validationError = true;
-      //   return;
-      // }
-      this.isSubmitting = true;
-
-      // const issueDate = new Date();
-
-      // const formValues = {
-      //   name: "Your " + this.healthSelectType + " Credential",
-      //   firstName: this.firstName,
-      //   lastName: this.lastName,
-      //   regNumber: this.regNumber,
-      //   healthType: this.healthSelectType,
-      //   regExpDate: this.regExpDate,
-      //   schema: VUE_APP_MAPAY_SCHEMA,
-      //   testTimestamp: issueDate.toISOString(),
-      //   summary: "Credential issued at " + issueDate.toDateString(),
-      // };
-
+      this.dmvSubmitting = true;
       try {
         await veridaClient.requestVC(
           this.did,
           VUE_APP_DMV_SCHEMA
         );
-        this.$toast.success("Credentials Requested Successfully");
+        this.dmvSubmitted = true;
+        this.$toast.success("Driver's License Requested Successfully");
       } catch (error) {
         this.$toast.error("Something went wrong  ");
       } finally {
+        this.dmvSubmitting = false;
+      }
+    },
+    async onSubmitHealth() {
+      this.validationError = false;
+      this.healthSubmitting = true;
+      try {
+        await veridaClient.requestVC(
+          this.did,
+          VUE_APP_HEALTH_SCHEMA
+        );
+        this.healthSubmitted = true;
+        this.$toast.success("Mental Health Screen Requested Successfully");
+      } catch (error) {
+        this.$toast.error("Something went wrong  ");
+      } finally {
+        this.healthSubmitting = false;
+      }
+    },
+    async onSubmitCrime() {
+      this.validationError = false;
+      this.crimeSubmitting = true;
+      try {
+        await veridaClient.requestVC(
+          this.did,
+          VUE_APP_CRIME_SCHEMA
+        );
+        this.$toast.success("Criminal Background Check Requested Successfully");
+        this.crimeSubmitted = true;
+      } catch (error) {
+        this.$toast.success("Something went wrong  ");
+      } finally {
+        this.crimeSubmitting = false;
+      }
+    },
+    async onVerify() {
+      this.isSubmitting = true;
+      this.validatingMessage = "Validating your credentials and performing background check...";
+      if (this.dmvSubmitted == true && this.healthSubmitted == true && this.crimeSubmitted) {
+        setTimeout(() => {
+          this.validCreds = true;
+          this.$toast.success("You've cleared your background check.");
+          this.isSubmitting = false;
+          this.validatingMessage = "";
+        }, 5000);
+      } else {
+        this.$toast.error("Something went wrong  ");
         this.isSubmitting = false;
       }
     },
@@ -99,11 +166,6 @@ export default defineComponent({
     setStatus(status: boolean) {
       this.connected = status;
       this.did = veridaClient.did as string;
-    },
-
-    selectType(value: string) {
-      this.healthSelectType = value;
-      this.selectOptions = false;
     },
   },
 });
@@ -131,8 +193,12 @@ export default defineComponent({
     font-size: 1.8rem;
     line-height: 140%;
     text-align: center;
-    margin-bottom: 3rem;
     color: #041133;
+    margin-bottom: 1rem;
+  }
+  
+  h2 {
+    margin-bottom: 3rem;
   }
 }
 
@@ -141,6 +207,11 @@ export default defineComponent({
   justify-content: center;
   align-items: center;
   margin: 3rem auto;
+}
+
+.logo {
+  height: 15rem;
+  width: 15rem;
 }
 
 .dropdown {
@@ -197,11 +268,26 @@ form {
   font-size: 0.8rem;
 }
 
-.submit-btn {
+.center-btn {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.submit-btn {
   margin: 1rem auto 3rem auto;
+  justify-content: flex-start;
+  align-items: flex-start;
+  &:hover {
+    cursor: pointer !important;
+    background: #333333;
+    opacity: 0.5;
+    .loading {
+      cursor: pointer !important;
+      color: white;
+      opacity: 1.0;
+    }
+  }
 
   .btn-default {
     height: 3rem;
@@ -219,8 +305,41 @@ form {
       background: #333333;
       opacity: 0.5;
     }
+    &.done {
+      text-decoration: line-through;
+    }
   }
 }
+
+.modal-container {
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  bottom: 0;
+}
+
+.modal {
+  background-color: white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  height: 25rem;
+  width: 25rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 3rem;
+  p {
+    margin-top: 2rem;
+    font-family: Nunito Sans;
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+}
+
 .grid-form {
   display: grid;
   grid-template-columns: 1fr 1fr;

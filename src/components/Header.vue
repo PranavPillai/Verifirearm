@@ -49,7 +49,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .header {
-  display: flex;
+  display: none;
   justify-content: space-between;
   align-items: center;
   height: 4rem;

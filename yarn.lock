@@ -12372,6 +12372,11 @@ vue-router@^4.0.0-0:
   dependencies:
     "@vue/devtools-api" "^6.0.0-beta.18"
 
+vue-simple-spinner@^1.2.10:
+  version "1.2.10"
+  resolved "https://registry.yarnpkg.com/vue-simple-spinner/-/vue-simple-spinner-1.2.10.tgz#d5b15e74f82848b2f4e1c8e8d54338701b9e7c90"
+  integrity sha512-hrDT+HVSBnesLXBni9SRSvZdiiJhbOFbRbASWcGXqNQpONoLIshEdG4BFv0l80Q7ysj46mGqI86my4gXHkDpCw==
+
 vue-spinner@^1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/vue-spinner/-/vue-spinner-1.0.4.tgz#0e794d9d93acb23b5b6564042157a531e7ce413b"

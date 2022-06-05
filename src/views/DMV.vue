@@ -2,7 +2,7 @@
   <app-header :setStatus="setStatus" />
   <div v-if="connected" class="app-section">
     <div class="credential-form">
-      <img src="../assets/images/verida_logo.svg" alt="verida" />
+      <img src="../assets/images/dmv-logo.svg" alt="dmv" />
       <h1>Congrats on Passing Your Driving Test!</h1>
       <h2>You're ready to be issued your digital driver's license.</h2>      
       <form @submit.prevent="onSubmit">
