@@ -4,7 +4,7 @@
     <div class="credential-form">
       <img src="../assets/images/verida_logo.svg" alt="verida" />
       <h1>Congrats on Passing Your Driving Test!</h1>
-      <h2>You're ready to be issued your digital driver's license.</h2>      
+      <h2>You're ready to be issued your digital driver's license.</h2>
       <form @submit.prevent="onSubmit">
         <div class="grid-form">
           <div class="form-block">
@@ -20,18 +20,18 @@
             />
           </div>
           <div class="form-block">
-            <label for="health-type"> Eye Color </label>
+            <label for="health-type">Eye Color</label>
             <span v-show="validationError" class="error-message"
-              >Please choose your eye color !
+              >Please choose an eye color!
             </span>
             <div class="dropdown">
               <div class="dropdown-value" @click="toggleSelect">
                 <span
                   :class="[
-                    eyeColorSelect !== 'Not Selected' &&
+                    eyeColor !== 'Not Selected' &&
                       'dropdown-value-text',
                   ]"
-                  >{{ eyeColorSelect }}</span
+                  >{{ eyeColor }}</span
                 >
                 <img
                   src="../assets/images/arrow_up.png"
@@ -76,7 +76,7 @@
             <input
               required
               type="text"
-              v-model="height"
+              v-model="regNumber"
               name="reg-number"
               :disabled="isSubmitting"
               id="reg-number"
@@ -84,11 +84,11 @@
             />
           </div>
           <div class="form-block">
-            <label for="reg-exp-date">License expiring date</label>
+            <label for="reg-exp-date">Today's Date</label>
             <input
               required
               type="date"
-              v-model="regExpDate"
+              v-model="todaysDate"
               name="reg-exp-date"
               id="reg-exp-date"
               :disabled="isSubmitting"
@@ -117,11 +117,8 @@
 import { defineComponent } from "vue";
 import PulseLoader from "vue-spinner/src/PulseLoader.vue";
 import { veridaClient } from "@/helpers";
-
 import AppHeader from "@/components/Header.vue";
-
-const { VUE_APP_DMV_SCHEMA } = process.env;
-
+const { VUE_APP_MAPAY_SCHEMA } = process.env;
 export default defineComponent({
   name: "Home",
   components: {
@@ -134,15 +131,10 @@ export default defineComponent({
       did: veridaClient.did,
       firstName: "",
       lastName: "",
-      height: "",
-      regExpDate: "",
-      eyeColors: [
-        "Blue",
-        "Green",
-        "Brown",
-        "Black"
-      ],
-      eyeColorSelect: "Not Selected",
+      regNumber: "",
+      todaysDate: "",
+      eyeColors: ["Brown", "Green", "Blue"],
+      eyeColor: "Not Selected",
       selectOptions: false,
       isSubmitting: false,
       validationError: false,
@@ -151,26 +143,24 @@ export default defineComponent({
   methods: {
     async onSubmit() {
       this.validationError = false;
-      if (this.eyeColorSelect === "Not Selected") {
+      if (this.eyeColor === "Not Selected") {
         this.validationError = true;
+        console.log("148");
         return;
       }
       this.isSubmitting = true;
-
       const issueDate = new Date();
-
       const formValues = {
-        name: "Your Digital Driver's License",
+        name: "Your " + this.eyeColor + " Credential",
         firstName: this.firstName,
         lastName: this.lastName,
-        height: this.height,
-        eyeColor: this.eyeColorSelect,
-        regExpDate: this.regExpDate,
-        schema: VUE_APP_DMV_SCHEMA,
+        regNumber: this.regNumber,
+        eyeColor: this.eyeColor,
+        todaysDate: this.todaysDate,
+        schema: VUE_APP_MAPAY_SCHEMA,
         testTimestamp: issueDate.toISOString(),
         summary: "Credential issued at " + issueDate.toDateString(),
       };
-
       try {
         const credentialData = await veridaClient.createDIDJwt(
           formValues,
@@ -179,6 +169,8 @@ export default defineComponent({
         await veridaClient.sendMessage(credentialData, this.did);
         this.$toast.success("Credentials Sent Successfully");
       } catch (error) {
+        console.log("172");
+        console.log(error);
         this.$toast.error("Something went wrong  ");
       } finally {
         this.isSubmitting = false;
@@ -191,9 +183,8 @@ export default defineComponent({
       this.connected = status;
       this.did = veridaClient.did as string;
     },
-
     selectType(value: string) {
-      this.eyeColorSelect = value;
+      this.eyeColor = value;
       this.selectOptions = false;
     },
   },
@@ -202,7 +193,6 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 @import "../assets/scss/main.scss";
-
 .input-text {
   font-weight: 600;
   font-size: 14px;
@@ -210,13 +200,11 @@ export default defineComponent({
   font-family: Nunito Sans;
   color: rgba(4, 17, 51, 0.3);
 }
-
 .credential-form {
   @extend .app-container;
   img {
     margin: 2rem 0 1.5rem 0;
   }
-
   h1 {
     font-weight: bold;
     font-size: 1.8rem;
@@ -228,14 +216,12 @@ export default defineComponent({
     margin-bottom: 3rem;
   }
 }
-
 .loading-pulse {
   display: flex;
   justify-content: center;
   align-items: center;
   margin: 3rem auto;
 }
-
 .dropdown {
   position: relative;
   &-value {
@@ -280,22 +266,18 @@ export default defineComponent({
     }
   }
 }
-
 form {
   display: inline-block;
 }
-
 .error-message {
   color: red;
   font-size: 0.8rem;
 }
-
 .submit-btn {
   display: flex;
   justify-content: center;
   align-items: center;
   margin: 1rem auto 3rem auto;
-
   .btn-default {
     height: 3rem;
     padding: 0px 32px;
@@ -317,11 +299,9 @@ form {
 .grid-form {
   display: grid;
   grid-template-columns: 1fr 1fr;
-
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
   }
-
   .form-block {
     text-align: left;
     margin: 0.8rem 1.2rem;
@@ -338,18 +318,15 @@ form {
       border-radius: 4px;
       outline: none;
       padding: 0 0.8rem;
-
       &::placeholder {
         @extend .input-text;
       }
-
       &:hover {
         background: #f8f8f8;
         border: 1px solid #e0e3ea;
         box-sizing: border-box;
         border-radius: 4px;
       }
-
       &:focus {
         background: #ffffff;
         border: 1px solid #009fe1;
