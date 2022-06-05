@@ -22,17 +22,28 @@ class VeridaClient {
   async createDIDJwt(data: any, subjectId: string): Promise<any> {
     if (this.credentials) {
       console.log("have credentials")
-      const credentialData = await this.credentials.createCredentialJWT({
+      this.credentials.createCredentialJWT({
         subjectId,
         data,
         context: this.context,
-      });
-
-      return credentialData;
+      }).then((credentialData) => {
+        return credentialData
+      }).catch((err) => {
+        console.log(err);
+        console.log(this.credentials?.getErrors());
+      })
+      // const credentialData = await this.credentials.createCredentialJWT({
+      //   subjectId,
+      //   data,
+      //   context: this.context,
+      // });
+      // console.log(credentialData);
+      // console.log(this.credentials.getErrors());
+      // return credentialData;
     } else {
       console.log("don't have credentials")
     }
-  }
+  } 
 
   public async sendMessage(messageData: any, did: string): Promise<boolean> {
     const type = "inbox/type/dataSend";

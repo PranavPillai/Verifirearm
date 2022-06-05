@@ -3,21 +3,9 @@
   <div v-if="connected" class="app-section">
     <div class="credential-form">
       <img src="../assets/images/verida_logo.svg" alt="verida" />
-      <h1>Register Licensed Professional</h1>
+      <h1>Mental Health Screening</h1>
       <form @submit.prevent="onSubmit">
         <div class="grid-form">
-          <div class="form-block">
-            <label for="did-number"> DID </label>
-            <input
-              required
-              type="text"
-              :disabled="isSubmitting"
-              name="did-number"
-              v-model="did"
-              id="did-number"
-              placeholder="e.g (did:vda:...)"
-            />
-          </div>
           <div class="form-block">
             <label for="doctor-name"> Issuing Doctor</label>
             <input
@@ -28,6 +16,18 @@
               id="doctor-name"
               :disabled="isSubmitting"
               placeholder="e.g Dr. Pranav Pillai"
+            />
+          </div>
+          <div class="form-block">
+            <label for="reg-number">Doctor License Number</label>
+            <input
+              required
+              type="text"
+              v-model="licenseNumber"
+              name="license-number"
+              :disabled="isSubmitting"
+              id="license-number"
+              placeholder="e.g DOC1098"
             />
           </div>
           <div class="form-block">
@@ -55,15 +55,15 @@
             />
           </div>
           <div class="form-block">
-            <label for="reg-number">Registration Number</label>
+            <label for="did-number"> DID </label>
             <input
               required
               type="text"
-              v-model="regNumber"
-              name="reg-number"
               :disabled="isSubmitting"
-              id="reg-number"
-              placeholder="e.g BAC12920"
+              name="did-number"
+              v-model="did"
+              id="did-number"
+              placeholder="e.g (did:vda:...)"
             />
           </div>
           <div class="form-block">
@@ -101,9 +101,9 @@ import { defineComponent } from "vue";
 import PulseLoader from "vue-spinner/src/PulseLoader.vue";
 import { veridaClient } from "@/helpers";
 import AppHeader from "@/components/Header.vue";
-const { VUE_APP_MAPAY_SCHEMA } = process.env;
+const { VUE_APP_VERIFIREARM_SCHEMA } = process.env;
 export default defineComponent({
-  name: "Home",
+  name: "Health",
   components: {
     AppHeader,
     PulseLoader,
@@ -114,8 +114,9 @@ export default defineComponent({
       did: veridaClient.did,
       firstName: "",
       lastName: "",
-      regNumber: "",
+      licenseNumber: "",
       regExpDate: "",
+      doctorName: "",
       selectOptions: false,
       isSubmitting: false,
       validationError: false,
@@ -130,9 +131,10 @@ export default defineComponent({
         name: "Your Mental Health Screen",
         firstName: this.firstName,
         lastName: this.lastName,
-        regNumber: this.regNumber,
+        licenseNumber: this.licenseNumber,
         regExpDate: this.regExpDate,
-        schema: VUE_APP_MAPAY_SCHEMA,
+        doctorName: this.doctorName,
+        schema: VUE_APP_VERIFIREARM_SCHEMA,
         testTimestamp: issueDate.toISOString(),
         summary: "Credential issued at " + issueDate.toDateString(),
       };
