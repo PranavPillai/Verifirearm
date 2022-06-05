@@ -4,6 +4,7 @@ import DMV from '../views/DMV.vue';
 import SSOLogin from "../views/SSOLogin.vue";
 import Health from "../views/HealthCredentialer.vue";
 import Crime from "../views/CrimeCredentialer.vue";
+import BackgroundCheck from '../views/BackgroundChecker.vue';
 import { routeGuard } from "../helpers/RouteGaurd";
 
 const routes: Array<RouteRecordRaw> = [
@@ -44,6 +45,14 @@ const routes: Array<RouteRecordRaw> = [
       requiresAuth: true,
     },
   },
+  {
+    path: "/background",
+    name: "Background Check",
+    component: BackgroundCheck,
+    meta: {
+      requiresAuth: true,
+    },
+  }
 ];
 
 const router = createRouter({
